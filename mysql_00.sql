@@ -53,7 +53,7 @@ from estudiante
 where edad between 20 AND 30;
 -- in
 select* from estudiante
-where dni in(76424324,14515625);
+where dni in(76424324,14515623);
 -- like
 select * from estudiante
 where nombre like 'J%';
@@ -67,3 +67,123 @@ where nombre like '_a%';
 select*from estudiante
 where nombre like '_a___';
 
+
+-- funciones con fechas
+
+create table fechas(
+id_fe int primary key,
+fecha1 date ,
+nombre varchar(220)
+-- fecha2 datetime,
+-- fecha3 time
+);
+drop table fechas;
+INSERT INTO fechas
+VALUES(1,'2020-01-12','Juan'),
+(2,'2022-01-15','Pedro'),
+(3,'2021-03-15','Oscar');
+
+select now(); -- fecha y hora actual
+select curdate(); -- just date
+select curtime(); -- just time
+-- now()              or (((getdate())) aun no
+select YEAR(now());
+select MONTH(now());
+select DAY(now());
+select TIME(now());
+
+select last_day(now()); -- ultimo dia del mes
+
+use northwind;
+
+show tables;
+describe employees;
+
+-- funciones de agregacion
+-- agrupar datos, resumirlos
+-- algunas: sum(), count(), max(), min(), avg(), round()
+
+select * from employees;
+-- SABER LA CANTIDAD DE EMPLEADOS
+select COUNT(EmployeeID) as CantidadEmpleados from employees;
+
+-- EL PRECIO MAXIMO Y MINIMO DE UN PRODUCTO
+select * from products;
+select max(Price) as PrecioMaximo, min(Price) as PrecioMinimo from products;
+
+-- sacar un promedio al precio d eun producto
+select avg(Price) from products;
+-- redondear el promedio
+select round(avg(Price)) as Precio from products;
+-- redondear todos los precios
+select round(Price) as Precio from products;
+
+-- DISTINC (NO ES FUNCION)
+select distinct Price from products;
+
+
+-- GROP BU Y HAVING
+-- GROUP BY: Agrpa 1 o varios registros
+-- HAVING: Filtra Grupos
+
+-- quiero saber el prmedio del precio de productos por cada categoria
+
+
+select * from products;
+
+select CategoryID, avg(Price) as PromedioPrecio from products
+group by CategoryID;
+
+-- quiero saber el prmedio del precio de productos por cada categoria, donde quiero 
+-- que solome muestre los promedios mayores a 30 <>
+ select CategoryID, avg(Price) as PromedioPrecio from products
+ group by CategoryID
+ having PromedioPrecio  > 30
+order by  PromedioPrecio desc
+limit 2;
+
+ -- DDL (CREATE,ALTER,DROP)
+ create table empleados (
+	cod_empleado int not null,
+    nombre_empleado varchar(255)  not null,
+    apellido_empleado varchar(255) not null,
+    dni_empleado char(8) not null unique,
+    telefono_empleado char(9) not null,
+    edad int not null,
+    sexo char(1) default 'M'
+ );
+ drop table empleados;
+ 
+ -- add primary key in empleados
+ alter table empleados
+ add primary key (cod_empleado);
+ 
+ select*from empleados;
+ -- add column salario
+ alter table empleados
+ add column salario decimal(4,2) not null;
+ 
+ alter table empleados
+ modify column salario decimal(7,2) not null;
+ -- add check to salario
+ alter table empleados 
+ add constraint chk_salario
+ check(salario > 1025.00);
+ 
+ --
+ 
+ alter table empleados
+ add constraint  chk_salarior
+check(salario > 3025.00);
+ 
+ alter table empleados
+ modify column cod_empleado int auto_increment;
+ alter table empleados
+ modify column cod_empleado int auto_increment;
+ 
+ alter table empleados
+ drop constraint chk_salarior;
+ 
+  insert into empleados values(DEFAULT,'Juan', 'Solis Perez', '76424314','578567567',23,DEFAULT, 2331.00);
+   insert into empleados values(DEFAULT,'Xio', 'Arias Lila', '86424314','178567567',26,DEFAULT, 2631.00);
+ 
