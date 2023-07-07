@@ -182,8 +182,111 @@ check(salario > 3025.00);
  modify column cod_empleado int auto_increment;
  
  alter table empleados
- drop constraint chk_salarior;
+ drop constraint chk_salario;
  
   insert into empleados values(DEFAULT,'Juan', 'Solis Perez', '76424314','578567567',23,DEFAULT, 2331.00);
    insert into empleados values(DEFAULT,'Xio', 'Arias Lila', '86424314','178567567',26,DEFAULT, 2631.00);
- 
+   
+   
+
+   set @edad = 20;
+   
+   -- procedimiento almaenado
+   
+   DELIMITER //
+   
+   CREATE PROCEDURE sp_lista_empleados()
+   BEGIN
+	select * from empleados;
+   END //
+   DELIMITER ;
+   
+   call sp_lista_empleados;
+   drop procedure if exists sp_lista_empleados;
+   
+   DELIMITER //
+   create procedure sp_con_parametros(v1 char(1))
+   begin
+	select * from empleados
+    where nombre_empleado LIKE concat(v1,'%');
+   end //
+   
+   DELIMITER ;
+   
+   call sp_con_parametros('X');
+   
+
+DELIMITER //
+create procedure sp_condicion(codigo int)
+begin 
+IF exists (select*from empleados where codigo_empleado = codigo)
+then
+	select*from empleados where codigo_empleado = codigo;
+
+ELSE
+
+	select 'No existe el empleado con el codigo';
+    end if;
+end //
+DELIMITER ;
+
+DELIMITER //
+create procedure sp_condicional(cod int)
+begin
+	if exists(select* from empleados where cod_empleado = cod)
+    then 
+    select* from empleados where cod_empleado = cod;
+    else
+     select 'NO EXISTE';
+     end if;
+end //
+DELIMITER ;
+
+CALL sp_condicional(3);
+
+-- muestrame el nombre , apellido y edad del empleado. Valida si es mayor de edad o menor de edad
+-- <>
+DELIMITER //
+create procedure sp_mayoredad(age int)
+begin
+	if (age >= 18 )
+    then
+		select * from empleados where edad >= 18;
+      
+    else
+    
+		select 'Es menor de edad'; 
+    end if;
+end //
+DELIMITER ;
+drop procedure sp_mayoredad;
+call sp_mayoredad(18);
+
+show tables;
+select * from orders;
+select * from orderdetails;
+select * from products;
+select * from categories;
+select c.CategoryName , p.ProductName, os.OrderDetailID, o.OrderID  as Ordenes from products p
+inner join categories c on  p.CategoryID = c.CategoryID
+inner join orders o inner join orderdetails os on o.OrderID = os.OrderID
+on os.ProductID = p.ProductID; 
+
+select c.CategoryName,  p.ProductName , c.Description from products p
+left join categories c on p.CategoryID = c.CategoryID;
+
+select os.ProductID as idproducto, sum(Quantity) as cantidad from orderdetails os
+group by os.ProductID; 
+
+create view v_detalles
+as
+select c.CategoryName , p.ProductName, os.OrderDetailID, o.OrderID  as Ordenes from products p
+inner join categories c on  p.CategoryID = c.CategoryID
+inner join orders o inner join orderdetails os on o.OrderID = os.OrderID
+on os.ProductID = p.ProductID; 
+
+select * from v_detalles;
+
+select sum(Quantity),ProductID from orderdetails
+group by ProductID
+having ProductID = 11;
